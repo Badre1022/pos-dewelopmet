@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 class="mb-4 fw-bold text-dark">Dashboard & Reports</h2>
+
+    {% if reminders %}
+    <div class="alert alert-warning shadow-sm mb-4" role="alert">
+        <h5 class="alert-heading fw-bold"><i class="fas fa-bell me-2"></i>Reminders: Returns Due Soon (Within 3 Days)
+        </h5>
+        <hr>
+        <div class="row">
+            {% for rental in reminders %}
+            <div class="col-md-4 mb-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span><strong>{{ rental.customer.name }}</strong> ({{ rental.dress.dress_code }})</span>
+                    <span class="badge bg-danger">{{ rental.due_time.strftime('%Y-%m-%d %I:%M %p') }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if current_user.role == 'admin' %}
+    <!-- Inventory Status Overview (Admin Only) -->
+    <div class="row mb-5">
+        <!-- Maintenance (Red) -->
+        <div class="col-md-4">
+            <div class="card border-danger shadow h-100">
+                <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center py-3">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-tools me-2"></i>Maintenance / Damaged</h5>
+                    <span class="badge bg-white text-danger rounded-pill fs-6">{{ maintenance_dresses|length }}</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush" style="max-height: 250px; overflow-y: auto;">
+                        {% for dress in maintenance_dresses %}
+                        <div
+                            class="list-group-item d-flex justify-content-between align-items-start list-group-item-danger border-bottom">
+                            <div>
+                                <div class="fw-bold">{{ dress.dress_code or dress.barcode }}</div>
+                                <small>{{ dress.category }} - {{ dress.color }}</small><br>
+                                <small class="text-muted fst-italic"><i class="fas fa-exclamation-circle me-1"></i>{{
+                                    dress.condition_notes or 'No notes' }}</small>
+                            </div>
+                            <span class="badge bg-danger rounded-pill">{{ dress.status }}</span>
+                        </div>
+                        {% else %}
+                        <div class="p-4 text-center text-muted">No items in maintenance.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rented (Yellow) -->
+        <div class="col-md-4">
+            <div class="card border-warning shadow h-100">
+                <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center py-3">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-clock me-2"></i>Currently Rented</h5>
+                    <span class="badge bg-white text-dark rounded-pill fs-6">{{ rented_dresses|length }}</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush" style="max-height: 250px; overflow-y: auto;">
+                        {% for dress in rented_dresses %}
+                        <div
+                            class="list-group-item d-flex justify-content-between align-items-start list-group-item-warning border-bottom">
+                            <div>
+                                <div class="fw-bold">{{ dress.dress_code or dress.barcode }}</div>
+                                <small>{{ dress.category }} - {{ dress.color }}</small>
+                            </div>
+                            <span class="badge bg-warning text-dark">Rented</span>
+                        </div>
+                        {% else %}
+                        <div class="p-4 text-center text-muted">No items rented out.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Available (Green) -->
+        <div class="col-md-4">
+            <div class="card border-success shadow h-100">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center py-3">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-check-circle me-2"></i>Available Now</h5>
+                    <span class="badge bg-white text-success rounded-pill fs-6">{{ available_dresses|length }}</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush" style="max-height: 250px; overflow-y: auto;">
+                        {% for dress in available_dresses %}
+                        <div
+                            class="list-group-item d-flex justify-content-between align-items-start list-group-item-success border-bottom">
+                            <div>
+                                <div class="fw-bold">{{ dress.dress_code or dress.barcode }}</div>
+                                <small>{{ dress.category }} - {{ dress.color }} ({{ dress.size }})</small>
+                            </div>
+                            <span class="badge bg-success">Available</span>
+                        </div>
+                        {% else %}
+                        <div class="p-4 text-center text-muted">No items available.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financial Summary Cards (Admin Only) -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-gradient-primary shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="card-title text-uppercase mb-2 opacity-75">Today's Income</h6>
+                    <h2 class="display-6 fw-bold">Rs. {{ "%.2f"|format(daily_income) }}</h2>
+                    <small><i class="fas fa-calendar-day me-1"></i> {{ now }}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-gradient-success shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="card-title text-uppercase mb-2 opacity-75">Monthly Revenue</h6>
+                    <h2 class="display-6 fw-bold">Rs. {{ "%.2f"|format(monthly_income) }}</h2>
+                    <small><i class="fas fa-calendar-alt me-1"></i> This Month</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-gradient-dark shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="card-title text-uppercase mb-2 opacity-75">Yearly Revenue</h6>
+                    <h2 class="display-6 fw-bold">Rs. {{ "%.2f"|format(yearly_income) }}</h2>
+                    <small><i class="fas fa-chart-line me-1"></i> This Year</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row">
+        {% if current_user.role == 'admin' %}
+        <!-- Monthly Report Table (Admin Only) -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white border-bottom-0 pt-3">
+                    <h5 class="fw-bold text-dark"><i class="fas fa-table me-2 text-success"></i>Daily Income Report ({{
+                        monthly_income|int }} total)</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive" style="max-height: 400px;">
+                        <table class="table table-striped table-hover mb-0 text-center">
+                            <thead class="table-dark sticky-top">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Day</th>
+                                    <th>Income (Rs.)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for entry in month_breakdown %}
+                                <tr class="{% if entry.date == today_date %}table-primary fw-bold{% endif %}">
+                                    <td>{{ entry.date.strftime('%Y-%m-%d') }}</td>
+                                    <td>{{ entry.date.strftime('%A') }}</td>
+                                    <td>{{ "%.2f"|format(entry.amount) }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Upcoming Returns Calendar (Visible to All) -->
+        <div class="{% if current_user.role == 'admin' %}col-lg-6{% else %}col-lg-12{% endif %} mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white border-bottom-0 pt-3">
+                    <h5 class="fw-bold text-dark"><i class="fas fa-calendar-alt me-2 text-primary"></i>Upcoming Returns
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive" style="max-height: 400px;">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th>Due Date</th>
+                                    <th>Details</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for rental in upcoming_returns %}
+                                <tr>
+                                    <td>
+                                        <div class="fw-bold">{{ rental.due_time.strftime('%Y-%m-%d') }}</div>
+                                        <small class="text-muted">{{ rental.due_time.strftime('%I:%M %p') }}</small>
+                                    </td>
+                                    <td>
+                                        <div class="small fw-bold">{{ rental.dress.dress_code }}</div>
+                                        <div class="small text-muted">{{ rental.customer.name }}</div>
+                                    </td>
+                                    <td>
+                                        {% if rental.status == 'Active' %}
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">{{ rental.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('rental.return_rental') }}"
+                                            class="btn btn-sm btn-outline-primary"><i class="fas fa-undo"></i></a>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">No upcoming returns found.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if current_user.role == 'admin' %}
+    <!-- Admin Monthly Income Graph -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white border-bottom-0 pt-3">
+                    <h5 class="fw-bold text-dark"><i class="fas fa-chart-bar me-2 text-info"></i>Monthly Revenue
+                        Analytics (Current Year)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="monthlyIncomeChart" width="400" height="150"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('monthlyIncomeChart').getContext('2d');
+        const monthlyIncomeChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ monthly_chart_data.labels | tojson }},
+        datasets: [{
+            label: 'Income (Rs.)',
+            data: {{ monthly_chart_data.data | tojson }},
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1,
+            borderRadius: 5
+                }]
+            },
+        options: {
+            responsive: true,
+                scales: {
+                y: {
+                    beginAtZero: true,
+                        title: {
+                        display: true,
+                            text: 'Amount (Rs)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                            text: 'Month'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+        });
+    </script>
+    {% endif %}
+</div>
+{% endblock %}

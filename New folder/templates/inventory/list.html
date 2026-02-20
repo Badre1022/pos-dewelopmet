@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Inventory Management</h2>
+    {% if current_user.role == 'admin' %}
+    <a href="{{ url_for('inventory.add_dress') }}" class="btn btn-success">+ Add New Dress</a>
+    {% endif %}
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Barcode</th>
+                        <th>Code</th>
+                        <th>Category</th>
+                        <th>Color</th>
+                        <th>Size</th>
+                        <th>Price (3 Days)</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dress in dresses %}
+                    <tr>
+                        <td>{{ dress.barcode }}</td>
+                        <td>{{ dress.dress_code }}</td>
+                        <td>{{ dress.category }}</td>
+                        <td>{{ dress.color }}</td>
+                        <td>{{ dress.size }}</td>
+                        <td>{{ dress.rent_price }}</td>
+                        <td>
+                            <span class="badge bg-{{ 'success' if dress.status == 'Available' else 'warning' }}">
+                                {{ dress.status }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if current_user.role == 'admin' %}
+                            <a href="{{ url_for('inventory.edit_dress', id=dress.id) }}"
+                                class="btn btn-sm btn-outline-primary">Edit</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center py-4">No dresses found. Add one to get started!</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

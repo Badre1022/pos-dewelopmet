@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-gradient-primary text-white p-4 rounded-top-3"
+                    style="background: linear-gradient(45deg, #4e73df, #224abe);">
+                    <h4 class="mb-0 fw-bold"><i class="fas fa-cash-register me-2"></i>New Rental Transaction</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" id="rentalForm">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-secondary">Dress Barcode</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="fas fa-barcode"></i></span>
+                                    <input type="text" name="barcode" id="barcodeInput"
+                                        class="form-control form-control-lg" required autofocus
+                                        placeholder="Scan Barcode...">
+                                </div>
+                                <div id="barcodeFeedback" class="mt-2 small fw-bold"></div>
+                                <div id="dressDetails" class="mt-2 p-2 bg-light rounded d-none border">
+                                    <small class="d-block text-muted">Category: <span id="detailCategory"
+                                            class="text-dark fw-bold"></span></small>
+                                    <small class="d-block text-muted">Color: <span id="detailColor"
+                                            class="text-dark fw-bold"></span></small>
+                                    <small class="d-block text-muted">Size: <span id="detailSize"
+                                            class="text-dark fw-bold"></span></small>
+                                    <small class="d-block text-muted">Price: <span id="detailPrice"
+                                            class="text-dark fw-bold"></span></small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-secondary">Customer</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="fas fa-user"></i></span>
+                                    <select name="customer_id" class="form-select form-select-lg" required>
+                                        <option value="">Select Customer...</option>
+                                        {% for customer in customers %}
+                                        <option value="{{ customer.id }}">{{ customer.name }} ({{ customer.phone }})
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info border-info d-flex align-items-center shadow-sm" role="alert">
+                            <i class="fas fa-info-circle fa-2x me-3 text-info"></i>
+                            <div>
+                                <strong>Terms & Conditions:</strong>
+                                <ul class="mb-0 ps-3 small">
+                                    <li>Rental duration is strictly <strong>3 days (75 Hours)</strong>.</li>
+                                    <li>Late fees apply automatically after the due time.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-secondary">Advance Payment</label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text bg-light">Rs.</span>
+                                <input type="number" step="0.01" name="advance_amount"
+                                    class="form-control fw-bold text-success" value="0">
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-3 mt-5">
+                            <a href="{{ url_for('index') }}"
+                                class="btn btn-outline-secondary px-4 rounded-pill">Cancel</a>
+                            <button type="submit" class="btn btn-primary px-5 rounded-pill shadow-sm fw-bold"
+                                id="submitBtn">
+                                <i class="fas fa-check-circle me-2"></i>Process Rental
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('barcodeInput').addEventListener('change', function () {
+        const barcode = this.value;
+        const feedback = document.getElementById('barcodeFeedback');
+        const details = document.getElementById('dressDetails');
+        const submitBtn = document.getElementById('submitBtn');
+
+        if (barcode) {
+            fetch('{{ url_for("rental.check_availability") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ barcode: barcode })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        feedback.innerHTML = `<span class="text-success"><i class="fas fa-check"></i> ${data.message}</span>`;
+
+                        // Show details
+                        document.getElementById('detailCategory').textContent = data.dress.category;
+                        document.getElementById('detailColor').textContent = data.dress.color;
+                        document.getElementById('detailSize').textContent = data.dress.size;
+                        document.getElementById('detailPrice').textContent = 'Rs. ' + data.dress.rent_price.toFixed(2);
+                        details.classList.remove('d-none');
+
+                        submitBtn.disabled = false;
+                    } else {
+                        feedback.innerHTML = `<span class="text-danger"><i class="fas fa-times"></i> ${data.message}</span>`;
+                        details.classList.add('d-none');
+                        submitBtn.disabled = true;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    feedback.innerHTML = `<span class="text-danger">Error checking barcode</span>`;
+                });
+        } else {
+            feedback.innerHTML = '';
+            details.classList.add('d-none');
+        }
+    });
+</script>
+{% endblock %}

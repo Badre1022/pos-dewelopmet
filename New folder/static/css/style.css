@@ -1,0 +1,240 @@
+/* Base Styles using Font from Google Fonts */
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: #f4f6f9;
+    color: #333;
+    overflow-x: hidden;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    height: 100vh;
+    background: linear-gradient(180deg, #2c3e50 0%, #4ca1af 100%);
+    /* Premium gradient */
+    color: white;
+    padding-top: 2rem;
+    position: fixed;
+    width: 16.66667%;
+    /* col-md-2 equivalent */
+    transition: all 0.3s;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h3 {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    padding: 12px 25px;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-left: 4px solid transparent;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border-left-color: #fff;
+    padding-left: 30px;
+}
+
+/* Main Content Area */
+.col-md-10 {
+    margin-left: 16.66667%;
+    /* Offset for fixed sidebar */
+    padding: 40px;
+    min-height: 100vh;
+}
+
+/* Cards & Containers */
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    background: #fff;
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    background: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 20px 25px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+}
+
+.btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(118, 75, 162, 0.6);
+    transform: translateY(-2px);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    border: none;
+    box-shadow: 0 4px 15px rgba(56, 239, 125, 0.4);
+}
+
+/* Forms */
+.form-control,
+.form-select {
+    border-radius: 10px;
+    border: 1px solid #e1e5eb;
+    padding: 12px 15px;
+    transition: all 0.3s;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #764ba2;
+    box-shadow: 0 0 0 4px rgba(118, 75, 162, 0.1);
+}
+
+/* Table Styling */
+.table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+.table thead th {
+    border: none;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    color: #8898aa;
+    font-weight: 600;
+    padding-bottom: 15px;
+}
+
+.table tbody tr {
+    background: #fff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.02);
+    border-radius: 10px;
+    transition: transform 0.2s;
+}
+
+.table tbody tr:hover {
+    transform: scale(1.01);
+}
+
+.table td {
+    border: none;
+    padding: 20px;
+    vertical-align: middle;
+}
+
+.table td:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.table td:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+/* Badges */
+.badge {
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+/* Receipt Print Overrides */
+@media print {
+    .sidebar {
+        display: none;
+    }
+
+    .col-md-10 {
+        margin: 0;
+        width: 100%;
+        padding: 0;
+    }
+
+    .card {
+        box-shadow: none;
+    }
+
+    .btn {
+        display: none;
+    }
+}
+
+/* Logo Styles */
+.logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.logo-circle {
+    width: 100px;
+    height: 100px;
+    border: 2px solid #e0c097;
+    /* Gold-ish border */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    background: white;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.logo-circle img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.brand-text {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #fff;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    margin-bottom: 0;
+    line-height: 1.2;
+}
+
+.brand-subtext {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    margin-top: 2px;
+}

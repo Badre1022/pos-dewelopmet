@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white">
+                <h4 class="mb-0">Edit Dress</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Barcode</label>
+                            <input type="text" name="barcode" class="form-control" value="{{ dress.barcode }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Dress Code</label>
+                            <input type="text" name="dress_code" class="form-control"
+                                value="{{ dress.dress_code or '' }}">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Category</label>
+                            <select name="category" class="form-select" required>
+                                <option value="Frock" {% if dress.category=='Frock' %}selected{% endif %}>Frock</option>
+                                <option value="Gown" {% if dress.category=='Gown' %}selected{% endif %}>Gown</option>
+                                <option value="Saree" {% if dress.category=='Saree' %}selected{% endif %}>Saree</option>
+                                <option value="Lehenga" {% if dress.category=='Lehenga' %}selected{% endif %}>Lehenga
+                                </option>
+                                <option value="Kids" {% if dress.category=='Kids' %}selected{% endif %}>Kids</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Color</label>
+                            <input type="text" name="color" class="form-control" value="{{ dress.color }}" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Size</label>
+                            <select name="size" class="form-select" required>
+                                <option value="XS" {% if dress.size=='XS' %}selected{% endif %}>XS</option>
+                                <option value="S" {% if dress.size=='S' %}selected{% endif %}>S</option>
+                                <option value="M" {% if dress.size=='M' %}selected{% endif %}>M</option>
+                                <option value="L" {% if dress.size=='L' %}selected{% endif %}>L</option>
+                                <option value="XL" {% if dress.size=='XL' %}selected{% endif %}>XL</option>
+                                <option value="XXL" {% if dress.size=='XXL' %}selected{% endif %}>XXL</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Rent Price (3 Days)</label>
+                            <input type="number" step="0.01" name="rent_price" class="form-control"
+                                value="{{ dress.rent_price }}" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Security Deposit</label>
+                            <input type="number" step="0.01" name="deposit_amount" class="form-control"
+                                value="{{ dress.deposit_amount }}" required>
+                        </div>
+                        <div class="col-md-12 mt-3">
+                            <label class="form-label text-danger fw-bold">Status</label>
+                            <select name="status" class="form-select border-danger">
+                                <option value="Available" {% if dress.status=='Available' %}selected{% endif %}>
+                                    Available
+                                </option>
+                                <option value="Rented" {% if dress.status=='Rented' %}selected{% endif %}>Rented
+                                </option>
+                                <option value="Maintenance" {% if dress.status=='Maintenance' %}selected{% endif %}>
+                                    Maintenance (Repair/Cleaning)</option>
+                                <option value="Damaged" {% if dress.status=='Damaged' %}selected{% endif %}>Damaged
+                                </option>
+                                <option value="Retired" {% if dress.status=='Retired' %}selected{% endif %}>Retired
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Condition Notes</label>
+                        <textarea name="condition_notes" class="form-control"
+                            rows="2">{{ dress.condition_notes or '' }}</textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ url_for('inventory.list_inventory') }}" class="btn btn-light">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Update Dress</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
